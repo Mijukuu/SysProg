@@ -91,17 +91,20 @@ int main(void) {
                 break;
         }
 
-        //read response from server 
-        if ((read(fd, recvbuffer, MAXLEN)) == -1) {
+        //read response from server, have to use 1 read call to prevent hanging.
+        int n = read(fd, recvbuffer, MAXLEN); 
+        if (n == -1) {
             perror("Cannot read from server");
             break;
         }
-        else if ((read(fd, recvbuffer, MAXLEN)) == 0) {
+        else if (n == 0) {
             printf("Server closed the connection.\n");
             break;
+        } 
+        else {
+            printf("Server: %s\n", recvbuffer);
         }
-
-        printf("Server: %s\n", recvbuffer);
+        
     }//end while
     close(fd);
     return 0;
